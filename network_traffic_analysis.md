@@ -1297,6 +1297,292 @@ tls.handshake.type == 2
   
 
 
+# NetworkMiner in Network Forensics
+
+The primary goal of **Network Forensics** is to identify malicious activities, security breaches, and network anomalies through the analysis of network traffic.
+
+**NetworkMiner** is a valuable network forensic analysis tool that helps investigators quickly identify useful information and determine where to begin an investigation.
+
+It provides insights such as:
+
+- Context about captured hosts (IP addresses, MAC addresses, hostnames, operating systems)
+- Potential attack indicators and anomalies (traffic spikes, port scans, suspicious connections)
+- Identification of tools used by attackers (e.g., Nmap)
+
+---
+
+# Supported Data Types
+
+Network forensic investigations commonly involve three types of data:
+
+## Live Traffic
+
+Traffic captured directly from a network interface in real time.
+
+## Traffic Captures
+
+Previously recorded packet capture files such as:
+
+```text
+.pcap
+.pcapng
+```
+
+## Log Files
+
+Network and system logs used to support forensic investigations.
+
+---
+
+# NetworkMiner in a Nutshell
+
+| Capability | Description |
+|------------|-------------|
+| Traffic Sniffing | Captures and logs packets traversing the network. |
+| PCAP Parsing | Parses packet capture files and displays detailed packet information. |
+| Protocol Analysis | Identifies protocols used within captured traffic. |
+| OS Fingerprinting | Determines operating systems based on network traffic characteristics. |
+| File Extraction | Extracts files such as images, HTML pages, and emails from captures. |
+| Credential Grabbing | Identifies and extracts credentials transmitted in network traffic. |
+| Cleartext Keyword Parsing | Extracts readable strings and keywords from captures. |
+
+---
+
+# OS Fingerprinting
+
+One of NetworkMiner's strongest features is **Operating System Fingerprinting**.
+
+It identifies operating systems based on packet characteristics and network stack behavior.
+
+NetworkMiner primarily relies on:
+
+- Satori
+- p0f
+
+These tools analyse TCP/IP stack behaviour and packet signatures to estimate the operating system of communicating hosts.
+
+---
+
+# File Extraction
+
+NetworkMiner can automatically extract:
+
+- Images
+- HTML files
+- Documents
+- Email attachments
+- Other transferred files
+
+This feature significantly reduces the time required to locate transferred artifacts during investigations.
+
+---
+
+# Credential Extraction
+
+NetworkMiner can identify credentials transmitted across the network.
+
+Examples include:
+
+- Usernames
+- Passwords
+- Authentication tokens
+
+This capability is especially useful when analysing:
+
+- Legacy protocols
+- Misconfigured services
+- Unencrypted communications
+
+---
+
+# Cleartext Keyword Parsing
+
+NetworkMiner can automatically extract readable text found within network traffic.
+
+Examples include:
+
+- URLs
+- Usernames
+- Search terms
+- Commands
+- Error messages
+
+This helps investigators quickly identify relevant information without manually inspecting packets.
+
+---
+
+# NetworkMiner Editions
+
+This guide focuses on the **NetworkMiner Free Edition**.
+
+The **Professional Edition** provides additional capabilities, including:
+
+- Enhanced file extraction
+- Improved reporting
+- Advanced protocol support
+- Additional forensic analysis features
+
+---
+
+# Operating Modes
+
+NetworkMiner supports two primary operating modes:
+
+---
+
+## 1. Sniffer Mode
+
+NetworkMiner can capture live traffic directly from the network.
+
+### Characteristics
+
+- Available primarily on Windows
+- Supports packet capture and logging
+- Less reliable than dedicated packet capture tools
+
+### Important Note
+
+Although NetworkMiner includes a packet capture feature, it is not intended to replace dedicated packet analyzers such as:
+
+- Wireshark
+- tcpdump
+
+The developers describe it primarily as a:
+
+> Network Forensic Analysis Tool with packet sniffing capabilities.
+
+---
+
+## 2. Packet Parsing / Processing Mode
+
+This is the recommended mode for most investigations.
+
+### Purpose
+
+Analyse previously captured packet files to obtain a rapid overview of:
+
+- Hosts
+- Services
+- Credentials
+- Files
+- Network relationships
+
+### Benefits
+
+- Quickly identifies low-hanging fruit
+- Reduces investigation time
+- Helps prioritise deeper analysis
+
+---
+
+# Pros and Cons of NetworkMiner
+
+## Advantages
+
+### OS Fingerprinting
+
+Quickly identifies operating systems from network traffic.
+
+### Easy File Extraction
+
+Automatically extracts transferred files.
+
+### Credential Discovery
+
+Locates transmitted credentials.
+
+### Cleartext Keyword Parsing
+
+Extracts human-readable content.
+
+### Rapid Overview
+
+Provides a fast summary of network activity and hosts.
+
+---
+
+## Disadvantages
+
+### Limited Live Sniffing
+
+Not ideal as a primary packet capture solution.
+
+### Poor Performance with Large PCAP Files
+
+Large captures can become difficult to process efficiently.
+
+### Limited Filtering Capabilities
+
+Filtering options are significantly less powerful than Wireshark.
+
+### Not Designed for Deep Packet Investigation
+
+Limited packet-level analysis compared to specialised packet analyzers.
+
+---
+
+# NetworkMiner vs Wireshark
+
+Although both tools analyse network traffic, their intended purposes differ significantly.
+
+## Recommended Workflow
+
+1. Capture traffic.
+2. Load the PCAP into NetworkMiner.
+3. Obtain a quick overview.
+4. Identify hosts, files, credentials, and anomalies.
+5. Perform detailed investigation using Wireshark.
+
+---
+
+# Feature Comparison
+
+| Feature | NetworkMiner | Wireshark |
+|----------|-------------|-----------|
+| Primary Purpose | Quick overview, traffic mapping, and data extraction | Deep packet analysis |
+| GUI | ✅ | ✅ |
+| Sniffing | ✅ | ✅ |
+| PCAP Processing | ✅ | ✅ |
+| OS Fingerprinting | ✅ | ❌ |
+| Parameter / Keyword Discovery | ✅ | Manual |
+| Credential Discovery | ✅ | ✅ |
+| File Extraction | ✅ | ✅ |
+| Filtering Options | Limited | ✅ |
+| Packet Decoding | Limited | ✅ |
+| Protocol Analysis | ❌ | ✅ |
+| Payload Analysis | ❌ | ✅ |
+| Statistical Analysis | ❌ | ✅ |
+| Cross-Platform Support | ✅ | ✅ |
+| Host Categorisation | ✅ | ❌ |
+| Ease of Management | ✅ | ✅ |
+
+---
+
+# When to Use NetworkMiner
+
+NetworkMiner is particularly useful when you need to:
+
+- Quickly identify hosts within a capture
+- Discover usernames and credentials
+- Extract files from traffic
+- Determine operating systems
+- Locate suspicious communications
+- Build an initial understanding of a PCAP file
+
+---
+
+# When to Use Wireshark Instead
+
+Wireshark is the better choice when you need to:
+
+- Analyse protocols in depth
+- Inspect packet payloads
+- Create complex filters
+- Perform statistical analysis
+- Investigate attack techniques in detail
+- Reconstruct communication sessions
+
+---
 
 
 
