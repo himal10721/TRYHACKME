@@ -2085,12 +2085,671 @@ associated with ICMP traffic.
 
 ---
 
+# Intrusion Detection Systems (IDS) and Snort
+
+Firewalls are typically deployed at the perimeter of a network to control incoming and outgoing traffic. They inspect connections before they are established and block traffic that violates security policies.
+
+However, attackers can sometimes bypass firewalls using legitimate-looking connections. Once inside the network, they may perform malicious activities that a firewall cannot detect because the connection has already been allowed.
+
+To address this limitation, organizations deploy **Intrusion Detection Systems (IDS)**.
+
+---
+
+# What is an IDS?
+
+An **Intrusion Detection System (IDS)** is a security solution that monitors network or host activity for signs of malicious behaviour.
+
+Unlike a firewall, an IDS does not block traffic. Instead, it:
+
+- Monitors activity
+- Detects suspicious behaviour
+- Generates alerts
+- Notifies security administrators
+
+---
+
+# Firewall vs IDS
+
+## Firewall
+
+Think of a firewall as a building's security gate.
+
+### Responsibilities
+
+- Checks who enters and exits
+- Allows or blocks access
+- Enforces security policies
+
+### Limitation
+
+If a malicious actor successfully enters through the gate, the firewall may not detect what happens afterward.
+
+---
+
+## IDS
+
+Think of an IDS as surveillance cameras throughout the building.
+
+### Responsibilities
+
+- Monitors activity after entry
+- Detects suspicious behaviour
+- Generates alerts for investigation
+
+### Limitation
+
+An IDS only detects and alerts.
+
+It does **not** automatically stop attacks.
+
+---
+
+# IDS Deployment Modes
+
+IDS solutions can be deployed in different ways depending on monitoring requirements.
+
+---
+
+# Host Intrusion Detection System (HIDS)
+
+A **Host Intrusion Detection System (HIDS)** is installed directly on individual systems.
+
+Examples:
+
+- Servers
+- Workstations
+- Laptops
+
+---
+
+## What HIDS Monitors
+
+- File changes
+- User activity
+- Process execution
+- System logs
+- Registry modifications
+
+---
+
+## Advantages
+
+### Detailed Visibility
+
+Provides deep insight into host activity.
+
+### Local Monitoring
+
+Can detect threats that network monitoring may miss.
+
+---
+
+## Disadvantages
+
+### Resource Intensive
+
+Consumes CPU, memory, and storage.
+
+### Management Complexity
+
+Must be installed and maintained on every host.
+
+---
+
+# Network Intrusion Detection System (NIDS)
+
+A **Network Intrusion Detection System (NIDS)** monitors traffic flowing across the network.
+
+Instead of monitoring a single host, it observes communications between systems.
+
+---
+
+## What NIDS Monitors
+
+- Network packets
+- Protocol activity
+- Suspicious connections
+- Malicious traffic patterns
+
+---
+
+## Advantages
+
+### Centralized Monitoring
+
+One deployment can monitor multiple systems.
+
+### Broad Visibility
+
+Provides a network-wide perspective.
+
+---
+
+## Disadvantages
+
+### Limited Host Context
+
+Cannot always see what occurred inside a compromised host.
+
+---
+
+# HIDS vs NIDS
+
+| Feature | HIDS | NIDS |
+|----------|------|------|
+| Monitoring Scope | Single Host | Entire Network |
+| Visibility | Host Activities | Network Traffic |
+| Deployment | Per Host | Centralized |
+| Resource Usage | Higher | Lower per Host |
+| Host Context | Excellent | Limited |
+| Network Context | Limited | Excellent |
+
+---
+
+# IDS Detection Modes
+
+IDS solutions classify threats using different detection methods.
+
+---
+
+# Signature-Based IDS
+
+Signature-based IDS detects attacks using predefined attack patterns.
+
+These attack patterns are known as **signatures**.
+
+---
+
+## How It Works
+
+1. Traffic is inspected.
+2. IDS compares traffic against known signatures.
+3. If a match occurs, an alert is generated.
+
+---
+
+## Advantages
+
+### Fast Detection
+
+Known threats are identified quickly.
+
+### Low False Positives
+
+Reliable when signatures are accurate.
+
+---
+
+## Disadvantages
+
+### Cannot Detect Zero-Day Attacks
+
+New attacks do not have existing signatures.
+
+### Requires Updates
+
+Signature databases must be maintained.
+
+---
+
+## Example
+
+A known malware beacon contains a unique traffic pattern.
+
+The IDS matches the traffic against its signature database and generates an alert.
+
+---
+
+# Anomaly-Based IDS
+
+Anomaly-based IDS identifies deviations from normal behaviour.
+
+---
+
+## How It Works
+
+1. The IDS learns normal network behaviour (baseline).
+2. Current activity is compared against the baseline.
+3. Significant deviations trigger alerts.
+
+---
+
+## Advantages
+
+### Detects Unknown Threats
+
+Can identify:
+
+- Zero-day attacks
+- New malware
+- Novel attack techniques
+
+---
+
+## Disadvantages
+
+### False Positives
+
+Legitimate but unusual activity may be flagged as malicious.
+
+### Training Required
+
+Baselines must be developed and refined.
+
+---
+
+## Example
+
+A workstation suddenly transfers 10 GB of data externally when it normally transfers less than 100 MB.
+
+The IDS identifies this as anomalous behaviour.
+
+---
+
+# Hybrid IDS
+
+A **Hybrid IDS** combines:
+
+- Signature-based detection
+- Anomaly-based detection
+
+---
+
+## Advantages
+
+### Best of Both Approaches
+
+Detects:
+
+- Known attacks
+- Unknown attacks
+
+### Improved Coverage
+
+Provides stronger overall security monitoring.
+
+---
+
+## Considerations
+
+May require:
+
+- More resources
+- More tuning
+- Greater administrative effort
+
+---
+
+# IDS Comparison
+
+| Detection Type | Detects Known Attacks | Detects Unknown Attacks | False Positive Rate |
+|----------------|----------------------|------------------------|---------------------|
+| Signature-Based | ✅ | ❌ | Low |
+| Anomaly-Based | ✅ | ✅ | Higher |
+| Hybrid | ✅ | ✅ | Moderate |
+
+---
+
+# Snort IDS
+
+## Overview
+
+**Snort** is one of the most widely used open-source IDS solutions.
+
+Originally developed in 1998, Snort provides:
+
+- Signature-based detection
+- Anomaly-based detection
+- Real-time traffic analysis
+- Packet logging
+- Protocol analysis
+
+---
+
+# Snort Rule-Based Detection
+
+Snort uses **rules** to identify suspicious traffic.
+
+Rules define:
+
+- What traffic to inspect
+- What conditions to match
+- What action to take
+
+---
+
+## Built-in Rules
+
+Snort ships with many predefined rule sets that detect:
+
+- Malware traffic
+- Exploits
+- Reconnaissance activity
+- Protocol abuses
+
+---
+
+## Custom Rules
+
+Administrators can:
+
+- Create new rules
+- Modify existing rules
+- Disable unnecessary rules
+
+This allows Snort to be tailored to organizational requirements.
+
+---
+
+# Snort Operating Modes
+
+Snort can operate in several different modes.
+
+---
+
+# 1. Packet Sniffer Mode
+
+## Purpose
+
+Reads and displays packets without performing detection.
+
+---
+
+## Capabilities
+
+- Traffic inspection
+- Protocol observation
+- Troubleshooting
+
+---
+
+## Example Use Case
+
+The network team investigates connectivity issues and wants to observe traffic flows.
+
+---
+
+# 2. Packet Logging Mode
+
+## Purpose
+
+Captures and stores network traffic for later analysis.
+
+---
+
+## Output
+
+Traffic can be logged as:
+
+```text
+PCAP files
+```
+
+---
+
+## Benefits
+
+Supports:
+
+- Incident response
+- Forensic investigations
+- Historical analysis
+
+---
+
+## Example Use Case
+
+A security team needs historical traffic to investigate a previous compromise.
+
+---
+
+# 3. Network Intrusion Detection System (NIDS) Mode
+
+## Purpose
+
+The primary operating mode of Snort.
+
+---
+
+## Functionality
+
+- Monitors traffic in real time
+- Applies rule sets
+- Detects malicious activity
+- Generates alerts
+
+---
+
+## Example Use Case
+
+An organization continuously monitors network traffic for threats.
+
+---
+
+# Snort Mode Comparison
+
+| Mode | Primary Function |
+|--------|-----------------|
+| Packet Sniffer | Display packets |
+| Packet Logging | Capture traffic for later analysis |
+| NIDS | Real-time intrusion detection |
+
+---
+
+# Understanding a Snort Rule
+
+A basic Snort rule consists of two sections:
+
+1. Rule Header
+2. Rule Options (Metadata)
+
+---
+
+## Example Rule
+
+```snort
+alert icmp any any -> $HOME_NET any (msg:"Ping Detected"; sid:10001; rev:1;)
+```
+
+---
+
+# Rule Components
+
+## Action
+
+Defines what happens when the rule matches.
+
+Example:
+
+```text
+alert
+```
+
+Generates an alert.
+
+---
+
+## Protocol
+
+Defines the protocol to inspect.
+
+Example:
+
+```text
+icmp
+```
+
+---
+
+## Source IP
+
+Defines the originating address.
+
+Example:
+
+```text
+any
+```
+
+Matches all sources.
+
+---
+
+## Source Port
+
+Defines the originating port.
+
+Example:
+
+```text
+any
+```
+
+Matches all ports.
+
+---
+
+## Direction Operator
+
+```text
+->
+```
+
+Specifies traffic flow direction.
+
+---
+
+## Destination IP
+
+Defines the destination address.
+
+Example:
+
+```text
+$HOME_NET
+```
+
+A variable representing the protected network.
+
+---
+
+## Destination Port
+
+Defines the destination port.
+
+Example:
+
+```text
+any
+```
+
+Matches all ports.
+
+---
+
+# Rule Metadata
+
+Rule options are enclosed in parentheses.
+
+---
+
+## Message (msg)
+
+Displayed when the rule triggers.
+
+Example:
+
+```text
+msg:"Ping Detected"
+```
+
+---
+
+## Signature ID (sid)
+
+Unique identifier for the rule.
+
+Example:
+
+```text
+sid:10001
+```
+
+---
+
+## Revision Number (rev)
+
+Tracks rule modifications.
+
+Example:
+
+```text
+rev:1
+```
+
+The revision number should increase whenever the rule changes.
+
+---
+
+# Running Snort on PCAP Files
+
+Snort is not limited to real-time traffic analysis.
+
+It can also analyse previously captured network traffic.
+
+---
+
+## Why Analyse PCAP Files?
+
+During investigations, analysts often receive:
+
+```text
+capture.pcap
+capture.pcapng
+```
+
+instead of live traffic.
+
+---
+
+## Benefits
+
+Snort can:
+
+- Apply existing signatures
+- Detect historical attacks
+- Generate alerts
+- Support forensic investigations
+
+---
+
+## Typical Workflow
+
+```text
+Network Incident
+        ↓
+Traffic Captured
+        ↓
+PCAP File Generated
+        ↓
+Snort Analysis
+        ↓
+Alert Generation
+        ↓
+Investigation
+```
+
+---
+
 # Key Takeaways
 
-- DNS, FTP, HTTP, and ICMP are commonly abused for data exfiltration.
-- DNS tunneling hides data inside DNS queries and responses.
-- FTP provides straightforward file transfer and often exposes credentials in plaintext.
-- HTTP exfiltration blends into normal web traffic using POST requests, cloud services, and encrypted channels.
-- ICMP tunneling abuses diagnostic traffic by embedding data into packet payloads.
-- Effective detection relies on correlating host logs, network logs, proxy logs, firewall logs, DNS logs, and packet captures.
-- Analysts should focus on abnormal volumes, unusual destinations, encoded data patterns, beaconing behaviour, and suspicious transfer mechanisms when investigating potential exfiltration activity.
+- Firewalls control access, while IDS solutions monitor activity after access is granted.
+- IDS acts as a detection mechanism and generates alerts but does not block attacks.
+- IDS solutions can be deployed as HIDS (host-based) or NIDS (network-based).
+- Signature-based IDS detects known threats using predefined attack signatures.
+- Anomaly-based IDS detects deviations from normal behaviour and can identify zero-day attacks.
+- Hybrid IDS combines both detection approaches.
+- Snort is a widely used open-source IDS supporting signature-based and anomaly-based detection.
+- Snort can operate in Packet Sniffer Mode, Packet Logging Mode, and NIDS Mode.
+- Snort rules define detection logic using actions, protocols, IP addresses, ports, and metadata.
+- Snort can analyse both live network traffic and historical PCAP files, making it useful for both real-time monitoring and forensic investigations.
