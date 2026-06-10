@@ -913,3 +913,1184 @@ Combining both perspectives creates a complete incident timeline.
 - Neither source alone provides a complete picture.
 - Effective threat detection and incident response require correlating both host and network logs.
 - Combining multiple visibility sources enables analysts to reconstruct accurate attack timelines and identify malicious activity more effectively.
+
+# Data Exfiltration
+
+**Data exfiltration** is the unauthorized transfer of data from an organization to an external destination controlled by an adversary.
+
+The theft may be:
+
+- **Deliberate** (malicious insider activity)
+- **Unintentional** (compromised accounts)
+- **Malware-driven** (data theft performed by malicious software)
+
+Data exfiltration is one of the most significant threats organizations face because it can result in financial loss, reputational damage, regulatory penalties, and exposure of sensitive information.
+
+---
+
+# Why Adversaries Perform Data Exfiltration
+
+Attackers steal data for various reasons depending on their objectives.
+
+## Financial Gain
+
+Stolen information can be sold or monetized.
+
+### Examples
+
+- Credit card information
+- Banking credentials
+- Personally Identifiable Information (PII)
+- Customer databases
+
+### Impact
+
+- Fraud
+- Identity theft
+- Financial losses
+
+---
+
+## Espionage
+
+Nation-state and advanced threat actors often target sensitive information.
+
+### Examples
+
+- Intellectual property
+- Trade secrets
+- Research data
+- Government information
+
+### Impact
+
+- Strategic advantage
+- Competitive intelligence
+- National security concerns
+
+---
+
+## Ransomware & Extortion
+
+Modern ransomware groups frequently steal data before encrypting systems.
+
+### Common Approach
+
+1. Steal sensitive data
+2. Encrypt victim systems
+3. Demand ransom
+4. Threaten public disclosure if payment is refused
+
+### Impact
+
+- Operational disruption
+- Data leaks
+- Double extortion
+
+---
+
+## Disruption & Sabotage
+
+Some attackers aim to damage organizations rather than profit directly.
+
+### Examples
+
+- Leaking confidential information
+- Publicly exposing internal communications
+- Releasing sensitive customer records
+
+---
+
+## Persistence & Reconnaissance
+
+Attackers may exfiltrate information to better understand the environment.
+
+### Examples
+
+- Network diagrams
+- Password databases
+- User lists
+- Configuration files
+
+This information can facilitate future attacks.
+
+---
+
+# Real-World Threat Actors and Exfiltration Methods
+
+| Threat Actor / Campaign | Exfiltration Technique | Description |
+|-------------------------|-----------------------|-------------|
+| APT29 (Cozy Bear) | HTTPS over legitimate domains | Used encrypted HTTPS channels to exfiltrate data from government networks. |
+| FIN7 | HTTP POST Requests | Embedded stolen data in HTTP POST traffic to Command & Control servers. |
+| Lunar Spider (Zloader) | Encrypted C2 Channels | Maintained long-term access and staged data theft through encrypted communications. |
+| DarkSide Ransomware | Dual Extortion | Stole data before encryption and threatened public release. |
+| APT10 (Cloud Hopper) | Cloud-to-Cloud Transfers | Used cloud APIs to exfiltrate data from managed service providers. |
+
+---
+
+# Common Phases of Data Exfiltration
+
+Data exfiltration typically follows a structured attack lifecycle.
+
+---
+
+## 1. Discovery / Collection
+
+The attacker identifies valuable information.
+
+### Targets
+
+- Documents
+- Databases
+- Credentials
+- Intellectual property
+- Customer records
+
+### Indicators
+
+- Large numbers of file access events
+- Extensive directory enumeration
+- Database queries
+
+---
+
+## 2. Staging / Compression
+
+Before transfer, data is often consolidated.
+
+### Common Techniques
+
+- ZIP archives
+- RAR archives
+- 7z compression
+- TAR archives
+- Base64 encoding
+- Encryption
+- Steganography
+
+### Purpose
+
+- Reduce transfer size
+- Avoid detection
+- Simplify exfiltration
+
+---
+
+## 3. Exfiltration Transport
+
+The attacker transfers data outside the organization.
+
+### Common Channels
+
+- HTTPS
+- FTP
+- SFTP
+- SCP
+- Cloud storage services
+- DNS tunnelling
+- USB devices
+
+---
+
+## 4. Command & Control (C2) Coordination
+
+Attackers often use a C2 server to:
+
+- Coordinate transfers
+- Verify successful uploads
+- Issue additional commands
+
+---
+
+# Data Exfiltration Techniques & Indicators
+
+Detection requires visibility across:
+
+- Host logs
+- Network logs
+- Cloud logs
+
+No single log source provides the full picture.
+
+---
+
+# Network-Based Exfiltration
+
+Data is transferred across network protocols.
+
+## Common Techniques
+
+- HTTP/HTTPS uploads
+- FTP
+- SFTP
+- SCP
+- DNS tunnelling
+- ICMP tunnelling
+- Custom TCP/UDP protocols
+
+---
+
+## Indicators of Compromise
+
+### Proxy Logs
+
+Look for:
+
+- Large POST requests
+- Uploads to cloud storage providers
+- Unusual outbound transfers
+
+### Firewall Logs
+
+Look for:
+
+- High outbound traffic volume
+- Large transfers to unknown destinations
+
+### NetFlow Data
+
+Look for:
+
+- Traffic spikes
+- Long-duration connections
+- Large outbound flows
+
+### DNS Logs
+
+Look for:
+
+- Long domain names
+- High-entropy subdomains
+- DNS TXT queries
+- Repetitive DNS requests
+
+---
+
+# Host-Based Exfiltration
+
+Attackers often use legitimate tools already present on systems.
+
+## Common Tools
+
+### PowerShell
+
+```powershell
+Invoke-WebRequest
+```
+
+### Command-Line Utilities
+
+```bash
+curl
+wget
+```
+
+### Cloud Transfer Tools
+
+```bash
+awscli
+rclone
+```
+
+### Archive Utilities
+
+```text
+zip
+rar
+7z
+```
+
+### Removable Media
+
+- USB devices
+- External drives
+
+---
+
+## Indicators of Compromise
+
+### Sysmon / EDR Logs
+
+Look for:
+
+- Process creation
+- Network connections
+- File creation activity
+
+### Important Sysmon Events
+
+| Event ID | Description |
+|-----------|-------------|
+| 1 | Process Creation |
+| 3 | Network Connection |
+| 11 | File Creation |
+
+### Windows Security Logs
+
+Monitor:
+
+```text
+4656 - Handle Request
+4663 - Object Access
+```
+
+### Linux
+
+Monitor:
+
+- auditd logs
+- shell history
+- file access events
+
+---
+
+# Cloud-Based Exfiltration
+
+Attackers increasingly use cloud services as exfiltration destinations.
+
+## Common Services
+
+- Amazon S3
+- Azure Blob Storage
+- Google Cloud Storage
+- SharePoint
+- OneDrive
+- Google Drive
+
+---
+
+## Indicators of Compromise
+
+### AWS
+
+Monitor:
+
+```text
+PutObject
+Multipart Upload
+```
+
+### Azure
+
+Monitor:
+
+- Blob uploads
+- Storage API activity
+
+### Google Cloud
+
+Monitor:
+
+- Object creation
+- Storage transfers
+
+---
+
+## Relevant Log Sources
+
+- AWS CloudTrail
+- Azure Activity Logs
+- Google Cloud Audit Logs
+
+---
+
+# Covert & Encoded Exfiltration
+
+Attackers may disguise data to avoid detection.
+
+## Common Techniques
+
+### DNS Tunnelling
+
+Data encoded inside DNS requests.
+
+### Base64 Encoding
+
+Converts binary data into text-based format.
+
+### Steganography
+
+Hides information inside:
+
+- Images
+- Audio files
+- Videos
+
+### Low-and-Slow Exfiltration
+
+Files are divided into many small transfers.
+
+---
+
+## Indicators of Compromise
+
+### DNS Logs
+
+Look for:
+
+- Long subdomains
+- Encoded strings
+- Frequent DNS TXT queries
+
+### Proxy Logs
+
+Look for:
+
+- Numerous small uploads
+- Repeated outbound requests
+
+### Correlation
+
+Combine:
+
+- DNS activity
+- Upload activity
+- Suspicious process execution
+
+---
+
+# Insider Threat & Collaboration Tool Exfiltration
+
+Attackers may use legitimate collaboration platforms.
+
+## Common Services
+
+- Slack
+- Microsoft Teams
+- Dropbox
+- Google Drive
+- Box
+- SharePoint
+
+---
+
+## Indicators of Compromise
+
+### Audit Logs
+
+Monitor:
+
+- File uploads
+- External sharing events
+- Mass downloads
+
+### Email Logs
+
+Monitor:
+
+- Large attachments
+- External recipients
+- Unusual forwarding activity
+
+---
+
+# General Indicators of Attack (IoAs)
+
+The following signs frequently indicate possible exfiltration activity.
+
+## Network Indicators
+
+- Large outbound data transfers
+- Traffic spikes
+- Unknown destination domains
+- Long-duration outbound sessions
+- Excessive cloud storage uploads
+
+---
+
+## Host Indicators
+
+- Archive creation before uploads
+- Suspicious PowerShell activity
+- Unexpected use of transfer tools
+- Numerous file reads before network connections
+
+---
+
+## Cloud Indicators
+
+- Unusual API activity
+- New storage destinations
+- Service account abuse
+- Access from unfamiliar locations
+
+---
+
+# SOC Level 1 Exfiltration Triage
+
+When investigating a potential exfiltration event, analysts should focus on:
+
+## Source
+
+- Which host initiated the transfer?
+- Which user was involved?
+
+## Destination
+
+- External IP address
+- Domain name
+- Cloud storage service
+
+## Volume
+
+- How much data was transferred?
+- Was the volume abnormal?
+
+## Process
+
+- Which process initiated the connection?
+- Was the process legitimate?
+
+## Timeline
+
+- When did file access occur?
+- When did the upload begin?
+
+---
+
+# Recommended Log Correlation
+
+A strong investigation combines evidence from:
+
+| Source | Information Provided |
+|----------|---------------------|
+| Proxy Logs | Web uploads and downloads |
+| Firewall Logs | Allowed/blocked connections |
+| NetFlow | Traffic volume and communication patterns |
+| DNS Logs | Domain lookups and tunnelling indicators |
+| Sysmon / EDR | Process and network activity |
+| Cloud Logs | Storage and API activity |
+| Email Logs | Message and attachment activity |
+
+---
+
+# Key Takeaways
+
+- Data exfiltration is the unauthorized transfer of sensitive information outside an organization.
+- Attackers perform exfiltration for financial gain, espionage, extortion, sabotage, and future attack planning.
+- Exfiltration commonly involves four phases: **Discovery → Staging → Transfer → C2 Coordination**.
+- Adversaries frequently use legitimate tools and trusted protocols such as HTTPS, DNS, cloud storage services, and collaboration platforms.
+- Detecting exfiltration requires correlating host, network, and cloud telemetry.
+- Effective SOC investigations focus on identifying **who accessed the data, what was transferred, how it was staged, and where it was sent**.
+- Successful detection relies on visibility across multiple log sources rather than a single alert or event.
+
+# Data Exfiltration Techniques: DNS, FTP, HTTP, and ICMP
+
+Attackers frequently abuse legitimate protocols to move sensitive information outside an organization. Because these protocols are commonly allowed through firewalls and security controls, malicious traffic can blend into normal network activity.
+
+This guide covers four common exfiltration methods:
+
+1. DNS Exfiltration
+2. FTP Exfiltration
+3. HTTP Exfiltration
+4. ICMP Exfiltration
+
+---
+
+# DNS Exfiltration
+
+## Overview
+
+**DNS Exfiltration** abuses the **Domain Name System (DNS)** to transfer data outside the network.
+
+Instead of using DNS solely for hostname resolution, attackers encode sensitive data into DNS queries or responses and send them to attacker-controlled DNS servers.
+
+Since DNS traffic is almost always allowed through firewalls and proxies, it provides an effective covert communication channel.
+
+---
+
+## DNS Tunneling
+
+DNS tunneling is the process of embedding data inside DNS requests and responses.
+
+### Example
+
+Normal DNS Query:
+
+```text
+www.example.com
+```
+
+Malicious DNS Query:
+
+```text
+U2Vuc2l0aXZlRGF0YQ.attackerdomain.com
+```
+
+The subdomain contains encoded data that the attacker's DNS server extracts and reconstructs.
+
+---
+
+## Why Attackers Use DNS
+
+### Always Available
+
+DNS traffic is essential for network operations and is typically permitted.
+
+### High Cover
+
+DNS queries appear legitimate unless inspected closely.
+
+### Flexible Payloads
+
+Data can be stored inside:
+
+- Subdomains
+- TXT records
+- DNS responses
+
+---
+
+## DNS Characteristics
+
+| Feature | Description |
+|----------|-------------|
+| Protocol | DNS |
+| Port | 53 |
+| Transport | UDP (primarily), TCP (occasionally) |
+| Common Records | A, AAAA, MX, TXT, CNAME |
+
+---
+
+## Indicators of DNS Exfiltration
+
+### High Query Volume
+
+Many DNS requests sent to a single external domain.
+
+### Long Domain Names
+
+Query names exceeding normal lengths.
+
+Examples:
+
+```text
+dns.qry.name.len > 60
+```
+
+or
+
+```text
+dns.qry.name.len > 100
+```
+
+---
+
+### High Entropy Strings
+
+Encoded data often appears random.
+
+Examples:
+
+```text
+a8k3mx92zq91vxn2d93b.domain.com
+```
+
+Look for:
+
+- Base32 strings
+- Base64 strings
+- Random character patterns
+
+---
+
+### Excessive TXT Queries
+
+TXT records are frequently abused for command and control and exfiltration.
+
+---
+
+### Frequent NXDOMAIN Responses
+
+Attackers may generate fake domains that never resolve.
+
+Indicators:
+
+```text
+Repeated NXDOMAIN responses
+```
+
+---
+
+### Beaconing Behaviour
+
+Regularly timed DNS requests.
+
+Examples:
+
+```text
+Every 60 seconds
+Every 5 minutes
+```
+
+---
+
+# FTP Exfiltration
+
+## Overview
+
+**File Transfer Protocol (FTP)** is one of the oldest file transfer protocols.
+
+It provides direct file upload and download capabilities between clients and servers.
+
+Because FTP is designed for transferring files, attackers often use it to move large quantities of stolen data.
+
+---
+
+## Why Attackers Use FTP
+
+### Efficient Transfers
+
+Large files can be uploaded quickly.
+
+### Existing Infrastructure
+
+Many organizations still maintain FTP servers.
+
+### Credential Abuse
+
+Compromised credentials can provide access to legitimate FTP services.
+
+---
+
+## Common Attack Methods
+
+### Legitimate FTP Servers
+
+Uploading stolen data to public FTP services.
+
+### Compromised Accounts
+
+Using stolen user credentials.
+
+### Non-Standard Ports
+
+Moving FTP traffic away from common detection signatures.
+
+### Tunneling
+
+Encapsulating FTP inside other protocols.
+
+---
+
+## FTP Indicators of Attack
+
+### Cleartext Credentials
+
+FTP transmits credentials in plaintext.
+
+Look for:
+
+```text
+USER
+PASS
+```
+
+commands.
+
+---
+
+### File Upload Commands
+
+```text
+STOR
+```
+
+indicates file upload activity.
+
+---
+
+### File Download Commands
+
+```text
+RETR
+```
+
+indicates file download activity.
+
+---
+
+### Large Data Transfers
+
+Look for:
+
+- High outbound traffic volume
+- Long FTP sessions
+- Large file uploads
+
+---
+
+### Unusual External Destinations
+
+Connections to:
+
+- Unknown FTP servers
+- Rare destinations
+- Foreign hosting providers
+
+---
+
+### After-Hours Activity
+
+Large transfers occurring outside normal business hours.
+
+---
+
+# HTTP Exfiltration
+
+## Overview
+
+HTTP-based exfiltration uses web traffic to transfer data outside the organization.
+
+Because HTTP traffic is extremely common, attackers can often blend malicious traffic into normal user activity.
+
+---
+
+## Why HTTP Exfiltration Matters
+
+### Legitimate Traffic
+
+Most organizations generate large amounts of HTTP/HTTPS traffic.
+
+### Firewall Friendly
+
+Web traffic is usually permitted.
+
+### Difficult to Distinguish
+
+Malicious uploads can resemble legitimate web activity.
+
+---
+
+# Common HTTP Exfiltration Techniques
+
+## HTTP POST Uploads
+
+The most common exfiltration method.
+
+Example:
+
+```http
+POST /upload.php HTTP/1.1
+```
+
+The request body contains stolen data.
+
+---
+
+## Encoded GET Requests
+
+Small amounts of data can be embedded inside:
+
+- Query parameters
+- URL paths
+
+Example:
+
+```http
+GET /collect?data=BASE64DATA
+```
+
+---
+
+## Custom HTTP Headers
+
+Attackers may hide data in headers.
+
+Example:
+
+```http
+X-Data: U2Vuc2l0aXZlRGF0YQ==
+```
+
+---
+
+## Chunked Transfers
+
+Large files split into multiple HTTP requests.
+
+Purpose:
+
+- Avoid size-based detection
+- Blend into normal traffic
+
+---
+
+## Multipart Uploads
+
+Files divided into multiple segments.
+
+Commonly seen in:
+
+- Cloud uploads
+- File sharing applications
+
+---
+
+## HTTPS/TLS Tunneling
+
+Data transferred through encrypted HTTPS sessions.
+
+Challenges:
+
+- Payload not visible
+- Requires TLS inspection
+- Detection relies on metadata
+
+---
+
+## Cloud Storage Abuse
+
+Attackers upload stolen information to:
+
+- Dropbox
+- Google Drive
+- GitHub
+- OneDrive
+- Gists
+
+---
+
+# HTTP Indicators of Attack
+
+### Large POST Requests
+
+Unusually large uploads to external hosts.
+
+---
+
+### Rare Destinations
+
+Connections to domains not typically observed in baseline traffic.
+
+---
+
+### Beaconing
+
+Repeated small requests to a single destination.
+
+---
+
+### Followed by Large Uploads
+
+Pattern:
+
+```text
+Small periodic requests
+↓
+Large POST request
+```
+
+Often indicates command-and-control followed by exfiltration.
+
+---
+
+### Multipart Transfers
+
+Numerous related uploads that collectively form a large file.
+
+---
+
+# ICMP Exfiltration
+
+## Overview
+
+**Internet Control Message Protocol (ICMP)** is primarily used for:
+
+- Diagnostics
+- Network troubleshooting
+- Error reporting
+
+Examples include:
+
+```text
+ping
+traceroute
+```
+
+Because ICMP is often trusted and lightly inspected, attackers may abuse it to create covert channels.
+
+---
+
+## How ICMP Exfiltration Works
+
+Attackers encode data into ICMP packet payloads and send them to attacker-controlled systems.
+
+The remote system extracts and reconstructs the stolen information.
+
+---
+
+## Common ICMP Exfiltration Techniques
+
+### Echo Request Tunneling
+
+Uses:
+
+```text
+ICMP Type 8
+```
+
+Data embedded inside ping requests.
+
+---
+
+### Echo Reply Tunneling
+
+Uses:
+
+```text
+ICMP Type 0
+```
+
+Data embedded inside responses.
+
+---
+
+### Custom ICMP Types
+
+Uses uncommon:
+
+- Types
+- Codes
+
+to avoid simple detection signatures.
+
+---
+
+### Fragmentation
+
+Large files split across multiple ICMP packets.
+
+---
+
+### Encryption & Encoding
+
+Data hidden using:
+
+- Base64
+- Hexadecimal
+- Encryption
+
+---
+
+# Indicators of ICMP Exfiltration
+
+### Persistent ICMP Sessions
+
+Frequent communication with an external host.
+
+---
+
+### Large Payload Sizes
+
+Normal ping payloads are relatively small.
+
+Suspicious examples:
+
+```text
+data.len > 64
+```
+
+---
+
+### High Entropy Payloads
+
+Random-looking data often indicates encoding or encryption.
+
+---
+
+### Regular Timing
+
+Packets sent at fixed intervals.
+
+Examples:
+
+```text
+Every 30 seconds
+Every 60 seconds
+```
+
+---
+
+### Unusual ICMP Types
+
+Examples:
+
+| Type | Description |
+|--------|------------|
+| 8 | Echo Request |
+| 0 | Echo Reply |
+| 13 | Timestamp Request |
+| 14 | Timestamp Reply |
+
+Frequent timestamp traffic may warrant investigation.
+
+---
+
+### Fragmented ICMP Packets
+
+Large transfers often generate fragmented traffic.
+
+---
+
+# ICMP Indicators in Wireshark
+
+## Display ICMP Traffic
+
+```wireshark
+icmp
+```
+
+---
+
+## Detect Large Payloads
+
+```wireshark
+data.len > 64 and icmp
+```
+
+---
+
+## Identify High Volumes
+
+Look for:
+
+- Numerous echo requests
+- Repeated external communication
+- Consistent packet sizes
+
+---
+
+## Detect Fragmentation
+
+Look for:
+
+```text
+IP fragments
+Reassembled packets
+```
+
+associated with ICMP traffic.
+
+---
+
+# Quick Comparison
+
+| Technique | Common Protocol | Why Attackers Use It | Key Indicators |
+|------------|----------------|----------------------|----------------|
+| DNS | UDP/TCP 53 | Commonly allowed and trusted | Long domains, high entropy, TXT records |
+| FTP | TCP 21 | Efficient file transfer | STOR commands, large uploads |
+| HTTP | TCP 80/443 | Blends with web traffic | Large POST requests, multipart uploads |
+| ICMP | Network Layer | Often lightly inspected | Large payloads, beaconing, fragmentation |
+
+---
+
+# Key Takeaways
+
+- DNS, FTP, HTTP, and ICMP are commonly abused for data exfiltration.
+- DNS tunneling hides data inside DNS queries and responses.
+- FTP provides straightforward file transfer and often exposes credentials in plaintext.
+- HTTP exfiltration blends into normal web traffic using POST requests, cloud services, and encrypted channels.
+- ICMP tunneling abuses diagnostic traffic by embedding data into packet payloads.
+- Effective detection relies on correlating host logs, network logs, proxy logs, firewall logs, DNS logs, and packet captures.
+- Analysts should focus on abnormal volumes, unusual destinations, encoded data patterns, beaconing behaviour, and suspicious transfer mechanisms when investigating potential exfiltration activity.
