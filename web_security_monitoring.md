@@ -311,3 +311,314 @@ An attacker may shorten or modify a legitimate user-agent string to conceal the 
 ```text
 Original: Mozilla/4.0 (+Windows NT 5.1)
 Altered:  Mozilla/4.0
+```
+
+# Denial-of-Service Attacks
+
+At their core, **Denial-of-Service (DoS)** attacks are designed to overwhelm a website or application so that legitimate users cannot access it. When this happens, customers may be unable to log in, shop, or use essential services, causing businesses to lose revenue and customer trust.
+
+A website that loads endlessly or repeatedly presents CAPTCHA challenges may be experiencing a denial-of-service attack. During an attack, excessive traffic or resource-intensive requests force defenders to work quickly to maintain service availability.
+
+DoS attacks can target different layers of a system. This section focuses on the application layer, **Layer 7** of the [OSI model](https://tryhackme.com/room/osimodelzi), where websites and web applications operate.
+
+---
+
+## Denial-of-Service (DoS)
+
+A DoS attack is considered successful if it prevents a web service from functioning as intended.
+
+Imagine a popular e-commerce website that sells bicycle parts and provides a product search form. The form accepts user input, queries a database, and returns matching results.
+
+If the application fails to validate or process input securely, an attacker could submit unexpected or malformed data that causes the application to hang or crash. A simple search form could therefore be abused to create a denial-of-service condition.
+
+An attacker could also target the form by:
+
+* Sending a large number of search requests.
+* Submitting a single oversized request.
+* Supplying malformed input that consumes excessive resources.
+* Triggering resource-intensive database queries.
+
+---
+
+## Distributed Denial-of-Service (DDoS)
+
+A basic DoS attack usually relies on one machine and one internet connection. Although a single computer can generate many requests, its impact is limited by its:
+
+* CPU
+* Memory
+* Bandwidth
+* Network connection
+
+Attackers use **Distributed Denial-of-Service (DDoS)** attacks to overcome these limitations.
+
+A DDoS attack uses a **botnet**, which is a collection of compromised devices controlled by an attacker. A botnet may include:
+
+* Desktop computers
+* Servers
+* Mobile devices
+* Internet of Things (IoT) devices
+
+These devices are often infected with malware and controlled without their owners' knowledge. When instructed, they simultaneously flood a target website or web application with traffic.
+
+For example, the bicycle-parts website may handle steady legitimate traffic but lack the capacity to process millions of requests within a short period. An attacker could instruct a botnet to swarm the website, exhaust its resources, and make it unavailable.
+
+---
+
+## DoS vs. DDoS
+
+| Feature | DoS | DDoS |
+| :--- | :--- | :--- |
+| **Traffic Source** | A single system or connection | Multiple distributed systems |
+| **Attack Capacity** | Limited by one device's resources | Combines the resources of many devices |
+| **Common Infrastructure** | One attacker-controlled machine | A botnet of compromised devices |
+| **Blocking Difficulty** | The source may be easier to identify and block | Numerous distributed sources make blocking more difficult |
+| **Potential Impact** | Usually smaller in scale | Capable of generating extremely large amounts of traffic |
+
+---
+
+## Types of Denial-of-Service Attacks
+
+Denial-of-service attacks can be launched by a single attacker as a **DoS** attack or distributed across a botnet as a **DDoS** attack.
+
+| DoS Attack Type | Description |
+| :--- | :--- |
+| **Slowloris** | Sends numerous partial HTTP requests to keep connections open and consume server resources. |
+| **HTTP Flood** | Sends a large number of HTTP requests to overwhelm the server or application. |
+| **Cache Bypass** | Bypasses CDN edge servers and forces the origin server to process requests directly. |
+| **Oversized Query** | Forces the server to process large or resource-intensive requests. |
+| **Login/Form Abuse** | Overloads authentication or form-processing logic with login attempts, submissions, or password-reset requests. |
+| **Faulty Input Validation Abuse** | Exploits poorly designed input handling to make the application consume excessive resources, hang, or crash. |
+
+## Possible Attack Motives
+
+| Motive | Description | Example Scenario |
+| :--- | :--- | :--- |
+| [**Financial Loss**](https://www.curotec.com/insights/christmas-hackers-attacks-increase-around-holidays/) | Disrupt services to stop or reduce sales and revenue. | Flooding an e-commerce website during peak holiday sales. |
+| [**Extortion**](https://www.cloudflare.com/learning/ddos/ransom-ddos-attack/) | Demand payment to stop an ongoing attack. | Threatening a bank with a ransom DDoS attack. |
+| [**Hacktivism**](https://www.zayo.com/resources/how-governments-can-combat-ddos-risk-during-elections/) | Disrupt services as part of a social or political protest. | Attacking government websites during an election period. |
+| [**Distraction**](https://www.cyberdefensemagazine.com/ddos-as-a-distraction/) | Redirect defenders' attention while another attack takes place. | Launching a DDoS attack while targeting other infrastructure. |
+| [**Competition**](https://digitalmarketingdesk.co.uk/63-of-ddos-attacks-linked-to-competitors/) | Disrupt a rival's services to increase its costs or gain market share. | Targeting a competitor with a DDoS attack during a product launch. |
+| [**Denial of Wallet**](https://blog.limbus-medtec.com/the-aws-s3-denial-of-wallet-amplification-attack-bc5a97cc041d) | Force the victim to accumulate service-usage costs. | Repeatedly accessing AWS S3 data to generate charges for each request. |
+| [**Reputational Damage**](https://stormwall.network/resources/blog/how-ddos-attacks-are-hurting-esports) | Cause customers to lose confidence or trust in an organisation. | Crashing game servers during the launch of a new game. |
+
+
+# Detecting Denial-of-Service Attacks in Web Server Logs
+
+Web server logs are a valuable source of evidence when investigating denial-of-service attacks. Major web services, including Apache, NGINX, and Microsoft IIS, record web requests in relatively standardised log formats.
+
+By examining these logs, analysts and incident responders can identify patterns that distinguish normal user traffic from potentially malicious activity.
+
+Denial-of-service attacks commonly flood a target with HTTP requests. However, an attacker may also use individual, specially crafted requests to exhaust resources or halt a service.
+
+---
+
+## Indicators of DoS and DDoS Attacks
+
+| Indicator | Example | Description |
+| :--- | :--- | :--- |
+| **High Request Rate** | `10.10.10.100` sends 1,000 requests to `GET /login`. | A resource-intensive page such as `/login` is flooded with requests to overwhelm authentication processes. Login pages are common targets because each request may trigger password checks and database queries. |
+| **Unusual User Agents** | `curl/7.6.88` repeatedly requests `/index`. | Attackers may use unusual, outdated, or spoofed user-agent strings to blend in or bypass filters. Traffic generated by tools such as `curl` or `Python-urllib/3.x` may indicate automated activity. |
+| **Geographic Anomalies** | Requests originate from IP addresses distributed around the world. | Legitimate traffic may normally originate from a limited number of geographic regions. A globally distributed botnet may generate traffic from numerous countries. |
+| **Burst Timestamps** | 50 requests are sent to `/search` within one second. | A sudden concentration of requests within the same second creates an unnatural traffic pattern that may indicate automation. |
+| [**Server Errors (5xx)**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status#server_error_responses) | A significant increase in `503 Service Unavailable` responses. | A surge in server-error responses between `500` and `511` may indicate exhausted resources or a service struggling under attack traffic. |
+| **Logic Abuse** | `GET /products?limit=999999` | An attacker submits a resource-intensive query that forces the server to retrieve or process an excessive amount of data. |
+
+Analysts should look for multiple related indicators rather than relying on a single event.
+
+For example, a DDoS attack performed by a globally distributed botnet may generate:
+
+* Requests from many IP addresses and geographic regions.
+* High request volumes within short periods.
+* Requests targeting multiple resource-intensive endpoints.
+* Identical user-agent strings across numerous IP addresses.
+* Varied user-agent strings intended to make the traffic appear legitimate.
+* Increasing numbers of `5xx` server responses.
+
+Maintaining a watchlist of common indicators can help analysts identify suspicious traffic more efficiently.
+
+---
+
+## Targeted Resources
+
+Attackers commonly target endpoints that consume significant server resources or are critical to website functionality.
+
+Dynamic endpoints are generally more expensive to process than static resources such as images or basic product pages. A single request may require the server to query a database, validate input, manage a session, or communicate with another service.
+
+### Commonly Targeted Endpoints
+
+| Endpoint | Reason for Targeting |
+| :--- | :--- |
+| **`/login`** | Requires authentication processing, password verification, session creation, and database queries. |
+| **`/search`** | May require complex or resource-intensive database queries. |
+| **`/api`** | Provides critical dynamic content and may communicate with databases or other back-end services. |
+| **`/register` or `/signup`** | Requires input validation and database writes. |
+| **`/contact` or `/feedback`** | May create database entries and trigger email notifications. |
+| **`/cart` or `/checkout`** | Requires session management, inventory checks, database operations, and payment processing. |
+
+---
+
+## Log Sample
+
+A condensed access log can show how a DoS attack develops during an incident.
+
+### 1. Normal User Traffic
+
+Under normal conditions, users request pages every few seconds and receive successful responses.
+
+Typical characteristics include:
+
+* Moderate request frequency.
+* Requests from different users.
+* Normal navigation between pages.
+* Mostly successful `2xx` or expected `3xx` responses.
+
+### 2. DoS Attack Begins
+
+At `10:01:10`, the IP address `203.0.113.55` begins sending repeated requests to the login page:
+
+```http
+GET /login.php
+```
+# Preventing and Mitigating Denial-of-Service Attacks
+
+Attackers constantly search for weaknesses to exploit, but defenders have various tools and techniques for keeping systems resilient. Prevention and mitigation strategies can help protect websites and web applications from denial-of-service attacks.
+
+---
+
+## Application-Level Defences
+
+### Secure Development Practices
+
+A secure website begins with secure code. Search fields, forms, and other input points must validate user input so that attackers cannot abuse them.
+
+Think of a search form as a librarian who retrieves books on request. If the librarian follows clear rules, such as only accepting titles shorter than 50 characters, requests can be processed efficiently. Without these rules, someone could request an extremely long title containing unusual characters, delaying the librarian and everyone else.
+
+Web applications similarly require input validation to prevent attackers from submitting specially crafted or resource-intensive queries designed to overload the system.
+
+Secure development practices include:
+
+* Limiting the length of user input.
+* Restricting input to expected characters and formats.
+* Rejecting malformed or unexpected requests.
+* Limiting the size of uploaded files.
+* Using efficient database queries.
+* Setting request-processing timeouts.
+* Preventing users from requesting excessive amounts of data.
+
+---
+
+## Challenges
+
+One method of stopping automated traffic is to require users to complete a challenge before granting access.
+
+### CAPTCHA Challenges
+
+A **CAPTCHA** asks the user to complete a task, such as:
+
+* Selecting particular images.
+* Entering displayed characters.
+* Checking a verification box.
+* Solving a simple puzzle.
+
+For legitimate users, this is usually a small additional step. For automated tools and bots, however, a CAPTCHA can block or significantly slow an attack.
+
+### JavaScript Challenges
+
+Websites can also use JavaScript challenges that run in the background to determine whether a visitor is a legitimate user or an automated client.
+
+Legitimate users may not notice these checks, but automated tools and botnets may fail them. This makes JavaScript challenges an effective filter against malicious traffic.
+
+---
+
+## Network and Infrastructure Defences
+
+### Content Delivery Network (CDN)
+
+A **Content Delivery Network (CDN)** manages server load by caching content and serving it from edge servers located close to users.
+
+This provides several benefits:
+
+* Reduces latency for legitimate users.
+* Reduces the number of requests sent to the origin server.
+* Absorbs large amounts of attack traffic.
+* Distributes traffic across multiple servers.
+* Reroutes requests when a server becomes unavailable.
+* Prevents a single server from becoming overloaded.
+
+Because most cached content is delivered by edge servers, the origin server only needs to process a fraction of the total requests.
+
+### Analysing a CDN Dashboard
+
+A CDN dashboard displaying a large DDoS attack may contain the following indicators:
+
+#### Total Bandwidth
+
+The total bandwidth shows the complete volume of traffic received during a selected period.
+
+If a website normally receives a few hundred gigabytes of traffic each month but suddenly receives `16 TB`, the increase may indicate abnormal or malicious activity.
+
+#### Cached Bandwidth
+
+Cached bandwidth represents the traffic successfully delivered by CDN edge servers.
+
+If almost all traffic is served from the cache, the CDN may have absorbed the attack before it reached and overwhelmed the origin server.
+
+#### Traffic Spike
+
+A sudden and significant spike in traffic may represent the start of a DDoS attack.
+
+Without a CDN, the full volume of malicious requests would reach the origin server directly.
+
+### CDN Visibility
+
+In addition to absorbing malicious traffic, CDNs provide analysts with visibility into website activity.
+
+CDN dashboards can help analysts examine traffic by:
+
+* Geographic location
+* Request volume
+* Source IP address
+* Requested resource
+* User-agent string
+* Response status
+* Cache status
+* Traffic pattern
+
+This information helps distinguish malicious traffic from legitimate user activity.
+
+---
+
+## Web Application Firewall (WAF)
+
+CDNs commonly integrate **Web Application Firewalls (WAFs)** to protect customer servers.
+
+A WAF inspects incoming traffic and decides whether to:
+
+* Allow the request.
+* Log the request.
+* Present a challenge.
+* Rate-limit the request.
+* Block the request.
+
+WAF rules may use:
+
+* Known attack indicators.
+* Threat intelligence.
+* IP reputation.
+* Geographic information.
+* Request frequency.
+* User-agent strings.
+* Suspicious query parameters.
+* Abnormal request patterns.
+
+Modern WAF solutions can detect and mitigate many DoS and DDoS attacks automatically. Defenders can also create custom rules for threats targeting a specific application.
+
+### Rate-Limiting Example
+
+A custom rate-limiting rule could restrict requests to `/login.php` to five requests per minute from each IP address.
+
+```text
+IF requests to /login.php exceed 5 per minute
+THEN challenge or temporarily block the source IP address
+```
+
